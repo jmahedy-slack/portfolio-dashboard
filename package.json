@@ -1,0 +1,19 @@
+{
+  "name": "portfolio-dashboard",
+  "version": "1.0.0",
+  "description": "Westbrook Wealth — Real-time Institutional Portfolio Performance & Attribution Dashboard",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -p 3000 ."
+  },
+  "keywords": [
+    "wealth",
+    "attribution",
+    "dashboard",
+    "brinson-fachler",
+    "ninety-one",
+    "slack-code"
+  ],
+  "author": "Ninety One Asset Management",
+  "license": "MIT"
+}

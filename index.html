@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0b0f19] text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Westbrook Wealth — Portfolio Performance & Attribution Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 20%, rgba(59, 130, 246, 0.15), transparent 70%);
+    }
+    .card-border {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="h-full antialiased text-slate-100 selection:bg-blue-500 selection:text-white flex flex-col">
+
+  <!-- Navigation Bar -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            Westbrook <span class="text-blue-400 font-semibold text-xs tracking-wider uppercase px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20">Wealth</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Center Fund Selector -->
+      <div class="hidden md:flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-lg px-3 py-1.5 shadow-inner">
+        <span class="text-xs text-slate-400 font-medium">Selected Strategy:</span>
+        <select class="bg-transparent text-sm font-semibold text-slate-200 focus:outline-none cursor-pointer">
+          <option value="LU0514695690" selected>Global Franchise Fund (LU0514695690)</option>
+          <option value="GB00CTEM0001">Emerging Markets Equity Fund (GB00CTEM0001)</option>
+          <option value="GB00CTGB0001">Global Environment Fund (GB00CTGB0001)</option>
+        </select>
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-1" title="Feed Reconciled"></span>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-3">
+        <button class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Export Report
+        </button>
+        <button class="text-xs font-bold px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/30 transition flex items-center gap-1.5">
+          <span>Rebalance</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Hero & Metrics Dashboard -->
+  <main class="flex-1 hero-glow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+      <!-- Hero Header -->
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-slate-800/70 pb-6">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            PORTFOLIO RECONCILED — ZERO LEAKAGE
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            Institutional Portfolio Performance & Attribution
+          </h1>
+          <p class="text-slate-400 text-sm sm:text-base max-w-3xl">
+            Real-time Brinson-Fachler attribution decomposition, multi-currency local equity returns, and SFDR Article 8 compliance for Ninety One institutional accounts.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 self-start lg:self-auto">
+          <div class="text-right">
+            <div class="text-xs font-medium text-slate-400">As of Date</div>
+            <div class="text-sm font-bold text-slate-200 font-mono">2026-10-10 16:00 BST</div>
+          </div>
+          <div class="h-8 w-px bg-slate-800"></div>
+          <div class="text-right">
+            <div class="text-xs font-medium text-slate-400">Feed Latency</div>
+            <div class="text-sm font-bold text-emerald-400 font-mono">42ms SLA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Total AUM -->
+        <div class="card-border rounded-xl p-5 hover:border-blue-500/30 transition">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span>Strategy AUM</span>
+            <span class="text-emerald-400 text-[11px] font-semibold bg-emerald-500/10 px-1.5 py-0.5 rounded">+4.8% QoQ</span>
+          </div>
+          <div class="mt-2 text-2xl font-extrabold text-white font-mono">£4,285,410,000</div>
+          <div class="mt-2 text-xs text-slate-400 flex items-center justify-between">
+            <span>Base: GBP</span>
+            <span>48 Holdings</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Active Return -->
+        <div class="card-border rounded-xl p-5 hover:border-blue-500/30 transition">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span>YTD Active Return (Alpha)</span>
+            <span class="text-emerald-400 text-[11px] font-semibold bg-emerald-500/10 px-1.5 py-0.5 rounded">+76.0 bps</span>
+          </div>
+          <div class="mt-2 text-2xl font-extrabold text-emerald-400 font-mono">+0.7600%</div>
+          <div class="mt-2 text-xs text-slate-400 flex items-center justify-between">
+            <span>Portfolio: 14.82%</span>
+            <span>Bench: 14.06%</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Information Ratio -->
+        <div class="card-border rounded-xl p-5 hover:border-blue-500/30 transition">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span>Information Ratio</span>
+            <span class="text-blue-400 text-[11px] font-semibold bg-blue-500/10 px-1.5 py-0.5 rounded">Top Quartile</span>
+          </div>
+          <div class="mt-2 text-2xl font-extrabold text-white font-mono">1.84</div>
+          <div class="mt-2 text-xs text-slate-400 flex items-center justify-between">
+            <span>Tracking Error: 1.42%</span>
+            <span>Beta: 0.96</span>
+          </div>
+        </div>
+
+        <!-- Card 4: ESG SFDR Article 8 -->
+        <div class="card-border rounded-xl p-5 hover:border-blue-500/30 transition">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span>SFDR Green Revenue</span>
+            <span class="text-emerald-400 text-[11px] font-semibold bg-emerald-500/10 px-1.5 py-0.5 rounded">Compliant</span>
+          </div>
+          <div class="mt-2 text-2xl font-extrabold text-white font-mono">84.2%</div>
+          <div class="mt-2 text-xs text-slate-400 flex items-center justify-between">
+            <span>Mandatory Threshold: &gt; 80%</span>
+            <span class="text-emerald-400">+4.2% Buffer</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brinson-Fachler Decomposition Matrix -->
+      <div class="card-border rounded-xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              Brinson-Fachler Attribution Breakdown
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Mathematical Invariant Verified</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Active Return = Allocation (+0.42%) + Selection (+0.58%) + Interaction (-0.24%) = +0.76% (Leakage: 0.00 bps)
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400">Attribution Method:</span>
+            <span class="text-xs font-bold bg-slate-800 px-2.5 py-1 rounded text-slate-200">Brinson-Fachler</span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left text-xs font-mono">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 font-semibold tracking-wider uppercase text-[11px]">
+                <th class="py-3 px-3">GICS Sector</th>
+                <th class="py-3 px-3 text-right">Port Wt%</th>
+                <th class="py-3 px-3 text-right">Bench Wt%</th>
+                <th class="py-3 px-3 text-right">Port Ret%</th>
+                <th class="py-3 px-3 text-right">Bench Ret%</th>
+                <th class="py-3 px-3 text-right text-blue-400">Alloc (bps)</th>
+                <th class="py-3 px-3 text-right text-indigo-400">Select (bps)</th>
+                <th class="py-3 px-3 text-right text-purple-400">Inter (bps)</th>
+                <th class="py-3 px-3 text-right text-emerald-400">Total Alpha</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-3 font-sans font-medium text-white">Technology</td>
+                <td class="py-3 px-3 text-right">24.50%</td>
+                <td class="py-3 px-3 text-right">22.10%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+22.40%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+18.20%</td>
+                <td class="py-3 px-3 text-right font-semibold">+9.8</td>
+                <td class="py-3 px-3 text-right font-semibold">+92.8</td>
+                <td class="py-3 px-3 text-right font-semibold">+10.1</td>
+                <td class="py-3 px-3 text-right font-bold text-emerald-400">+112.7 bps</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-3 font-sans font-medium text-white">Health Care</td>
+                <td class="py-3 px-3 text-right">18.20%</td>
+                <td class="py-3 px-3 text-right">14.30%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+16.80%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+12.10%</td>
+                <td class="py-3 px-3 text-right font-semibold">-8.2</td>
+                <td class="py-3 px-3 text-right font-semibold">+67.2</td>
+                <td class="py-3 px-3 text-right font-semibold">+18.3</td>
+                <td class="py-3 px-3 text-right font-bold text-emerald-400">+77.3 bps</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-3 font-sans font-medium text-white">Consumer Staples</td>
+                <td class="py-3 px-3 text-right">16.40%</td>
+                <td class="py-3 px-3 text-right">11.80%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+9.40%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+8.60%</td>
+                <td class="py-3 px-3 text-right font-semibold">+12.4</td>
+                <td class="py-3 px-3 text-right font-semibold">+9.4</td>
+                <td class="py-3 px-3 text-right font-semibold">-3.7</td>
+                <td class="py-3 px-3 text-right font-bold text-emerald-400">+18.1 bps</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-3 font-sans font-medium text-white">Financials</td>
+                <td class="py-3 px-3 text-right">14.10%</td>
+                <td class="py-3 px-3 text-right">15.90%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+14.20%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+13.40%</td>
+                <td class="py-3 px-3 text-right font-semibold">+1.2</td>
+                <td class="py-3 px-3 text-right font-semibold">+12.7</td>
+                <td class="py-3 px-3 text-right font-semibold">-1.4</td>
+                <td class="py-3 px-3 text-right font-bold text-emerald-400">+12.5 bps</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-3 font-sans font-medium text-white">Industrials</td>
+                <td class="py-3 px-3 text-right">12.50%</td>
+                <td class="py-3 px-3 text-right">10.40%</td>
+                <td class="py-3 px-3 text-right text-rose-400">-4.20%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+2.10%</td>
+                <td class="py-3 px-3 text-right font-semibold">-24.5</td>
+                <td class="py-3 px-3 text-right font-semibold">-65.5</td>
+                <td class="py-3 px-3 text-right font-semibold">-13.2</td>
+                <td class="py-3 px-3 text-right font-bold text-rose-400">-103.2 bps</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="bg-slate-900/60 font-bold border-t border-slate-700 text-white">
+                <td class="py-3 px-3 font-sans">Total Attribution Reconciliation</td>
+                <td class="py-3 px-3 text-right">100.00%</td>
+                <td class="py-3 px-3 text-right">100.00%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+14.82%</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+14.06%</td>
+                <td class="py-3 px-3 text-right text-blue-400">+42.0 bps</td>
+                <td class="py-3 px-3 text-right text-indigo-400">+58.0 bps</td>
+                <td class="py-3 px-3 text-right text-purple-400">-24.0 bps</td>
+                <td class="py-3 px-3 text-right text-emerald-400">+76.0 bps</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top Alpha Contributors & Detractors -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Top 3 Contributors -->
+        <div class="card-border rounded-xl p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Top Alpha Drivers
+            </h3>
+            <span class="text-xs text-slate-400">Active Contribution</span>
+          </div>
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/40 border border-slate-800">
+              <div>
+                <div class="text-sm font-bold text-white">Microsoft Corp (MSFT)</div>
+                <div class="text-xs text-slate-400">Technology • Weight 6.8%</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-emerald-400 font-mono">+48.2 bps</div>
+                <div class="text-xs text-slate-400">Return: +28.4%</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/40 border border-slate-800">
+              <div>
+                <div class="text-sm font-bold text-white">Novo Nordisk A/S (NOVO)</div>
+                <div class="text-xs text-slate-400">Health Care • Weight 5.4%</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-emerald-400 font-mono">+36.4 bps</div>
+                <div class="text-xs text-slate-400">Return: +32.1%</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/40 border border-slate-800">
+              <div>
+                <div class="text-sm font-bold text-white">ASML Holding NV (ASML)</div>
+                <div class="text-xs text-slate-400">Technology • Weight 4.9%</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-emerald-400 font-mono">+29.1 bps</div>
+                <div class="text-xs text-slate-400">Return: +24.8%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top 3 Detractors -->
+        <div class="card-border rounded-xl p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+              Bottom Alpha Detractors
+            </h3>
+            <span class="text-xs text-slate-400">Active Detraction</span>
+          </div>
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/40 border border-slate-800">
+              <div>
+                <div class="text-sm font-bold text-white">Alstom SA (ALO)</div>
+                <div class="text-xs text-slate-400">Industrials • Weight 2.1%</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-rose-400 font-mono">-42.5 bps</div>
+                <div class="text-xs text-slate-400">Return: -18.2%</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/40 border border-slate-800">
+              <div>
+                <div class="text-sm font-bold text-white">Diageo PLC (DGE)</div>
+                <div class="text-xs text-slate-400">Consumer Staples • Weight 3.4%</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-rose-400 font-mono">-24.1 bps</div>
+                <div class="text-xs text-slate-400">Return: -8.4%</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/40 border border-slate-800">
+              <div>
+                <div class="text-sm font-bold text-white">Siemens Energy (ENR)</div>
+                <div class="text-xs text-slate-400">Industrials • Weight 1.8%</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-rose-400 font-mono">-18.6 bps</div>
+                <div class="text-xs text-slate-400">Return: -12.1%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">
+    Ninety One Westbrook Institutional Platform • Real-Time Engine v1.2.0 • Data verified against FactSet & Refinitiv feeds
+  </footer>
+
+</body>
+</html>
