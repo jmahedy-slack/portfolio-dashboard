@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Syncs the local Homepage.html and Git Unified Diff to the Slack Code Channel's split-view Artifact tabs.
+ * Syncs the local Homepage.html and Git Unified Diff to the Slack Code split-view Artifact tabs.
  * Uses Slack's agents.conversations.setView and agents.conversations.setProperties APIs to update
  * the live preview and the Code/Diff tab in real time.
  */
@@ -51,8 +51,8 @@ if (existsSync(htmlFile)) {
 }
 
 async function syncCodeChannel() {
-  console.log(`[Slack Code Channel Sync] Target Channel: ${CHANNEL_ID}`);
-  console.log(`[Slack Code Channel Sync] Repo: ${repoName} | Branch: ${branch} | Commit: ${commitSha}`);
+  console.log(`[Slack Code Sync] Target Channel: ${CHANNEL_ID}`);
+  console.log(`[Slack Code Sync] Repo: ${repoName} | Branch: ${branch} | Commit: ${commitSha}`);
 
   // 1. Update the HTML Homepage Preview in the split pane (if available)
   if (htmlContent) {
@@ -98,7 +98,7 @@ async function syncCodeChannel() {
   }
 
   if (diffContent) {
-    console.log(`[Slack Code Channel Sync] Publishing Unified Diff (${diffContent.length} bytes) to Code tab...`);
+    console.log(`[Slack Code Sync] Publishing Unified Diff (${diffContent.length} bytes) to Code tab...`);
     const setDiffRes = await fetch("https://slack.com/api/agents.conversations.setView", {
       method: "POST",
       headers: {
@@ -212,12 +212,12 @@ async function syncCodeChannel() {
       },
       body: JSON.stringify({
         channel: CHANNEL_ID,
-        text: `⚡ *Code Channel Updated:* Synced ${detailParts.join(" • ")}.`,
+        text: `⚡ *Slack Code Updated:* Synced ${detailParts.join(" • ")}.`,
       }),
     });
   }
 
-  console.log("✔ All Code Channel views and properties synchronized successfully.");
+  console.log("✔ All Slack Code views and properties synchronized successfully.");
 }
 
 syncCodeChannel().catch((err) => {

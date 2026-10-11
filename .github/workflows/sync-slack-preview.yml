@@ -1,4 +1,4 @@
-name: Sync Slack Code Channel Preview & Diff
+name: Sync Slack Code Preview & Diff
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   sync-preview:
-    name: Update Slack Code Channel Split-Pane Preview & Diff
+    name: Update Slack Code Split-Pane Preview & Diff
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository

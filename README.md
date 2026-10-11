@@ -24,14 +24,15 @@ portfolio-dashboard/
 
 ---
 
-## 💬 Slack Code Channel Integration
+## 💬 Slack Code Integration
 
-Built for dedicated Slack Code channels (`agents.conversations.*`):
-- **Channel**: `#new-portfolio-view` (`C0C96QL1R16`)
+Built for **Slack Code** (`agents.conversations.*`):
+- **Channel**: `</> Portfolio Dashboard` (`C0C8EE77YBB`)
 - **Views**:
-  - `Homepage` (HTML artifact preview view)
-  - `Plan` (implementation & architectural specification canvas)
+  - `Homepage` (interactive HTML preview artifact)
+  - `Plan` (architectural & milestone specification canvas)
+  - `Code` (real-time unified git diff)
 - **Context Bar**:
-  - `[folder] jmahedy-slack/portfolio-dashboard`
+  - `[folder] jmahedy-slack/portfolio-attribution`
   - `[branch] main`
-  - `[cpu] 15.3k tokens`
+  - `[cpu] commit ea8d6e4`
