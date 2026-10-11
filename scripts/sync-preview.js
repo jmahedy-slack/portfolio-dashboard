@@ -71,12 +71,26 @@ if (htmlContent && existsSync(styleCssPath)) {
   }
 }
 
-const marketFeedContent = loadFile("market-feed.html");
-const esgScorecardContent = loadFile("esg-scorecard.html");
+const marketEsgContent = loadFile("market-esg.html") || loadFile("market-feed.html");
+const pipelineStatusContent = loadFile("pipeline-status.html");
 
 async function syncCodeChannel() {
   console.log(`[Slack Code Sync] Target Channel: ${CHANNEL_ID}`);
   console.log(`[Slack Code Sync] Repo: ${repoName} | Branch: ${branch} | Commit: ${commitSha}`);
+
+  // Clean up legacy view keys if present to prevent too_many_views error
+  for (const oldKey of ["market-feed.html", "esg-scorecard.html"]) {
+    try {
+      await fetch("https://slack.com/api/agents.conversations.removeView", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${SLACK_BOT_TOKEN}`,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({ channel_id: CHANNEL_ID, view_key: oldKey }),
+      });
+    } catch (_) {}
+  }
 
   // 1. Update Homepage HTML Preview in the split pane
   if (htmlContent) {
@@ -102,8 +116,8 @@ async function syncCodeChannel() {
     }
   }
 
-  // 2. Update Market & Pricing Feed HTML Monitor in the split pane
-  if (marketFeedContent) {
+  // 2. Update Pipeline Status HTML Monitor in the split pane
+  if (pipelineStatusContent) {
     const res = await fetch("https://slack.com/api/agents.conversations.setView", {
       method: "POST",
       headers: {
@@ -113,21 +127,21 @@ async function syncCodeChannel() {
       body: JSON.stringify({
         channel_id: CHANNEL_ID,
         type: "html",
-        view_key: "market-feed.html",
-        name: "Market Feeds",
-        content: marketFeedContent,
+        view_key: "pipeline-status.html",
+        name: "Pipeline Status",
+        content: pipelineStatusContent,
       }),
     }).then((r) => r.json());
 
     if (res.ok) {
-      console.log("✔ agents.conversations.setView (Market Feeds) succeeded:", res.view_id);
+      console.log("✔ agents.conversations.setView (Pipeline Status) succeeded:", res.view_id);
     } else {
-      console.warn("⚠ agents.conversations.setView (Market Feeds) warning:", res.error);
+      console.warn("⚠ agents.conversations.setView (Pipeline Status) warning:", res.error);
     }
   }
 
-  // 3. Update ESG SFDR Article 8 Mandate Scorecard in the split pane
-  if (esgScorecardContent) {
+  // 3. Update Market & ESG Scorecard in the split pane
+  if (marketEsgContent) {
     const res = await fetch("https://slack.com/api/agents.conversations.setView", {
       method: "POST",
       headers: {
@@ -137,16 +151,16 @@ async function syncCodeChannel() {
       body: JSON.stringify({
         channel_id: CHANNEL_ID,
         type: "html",
-        view_key: "esg-scorecard.html",
-        name: "ESG Scorecard",
-        content: esgScorecardContent,
+        view_key: "market-esg.html",
+        name: "Market & ESG",
+        content: marketEsgContent,
       }),
     }).then((r) => r.json());
 
     if (res.ok) {
-      console.log("✔ agents.conversations.setView (ESG Scorecard) succeeded:", res.view_id);
+      console.log("✔ agents.conversations.setView (Market & ESG) succeeded:", res.view_id);
     } else {
-      console.warn("⚠ agents.conversations.setView (ESG Scorecard) warning:", res.error);
+      console.warn("⚠ agents.conversations.setView (Market & ESG) warning:", res.error);
     }
   }
 

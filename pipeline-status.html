@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0b0f19] text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CI/CD Pipelines & Release Gates — Ninety One</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0b0f19; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .card-border {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+  </style>
+</head>
+<body class="h-full antialiased text-slate-100 p-6 flex flex-col space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+    <div>
+      <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        ALL PIPELINES OPERATIONAL
+      </div>
+      <h1 class="text-2xl font-extrabold text-white flex items-center gap-2">
+        CI/CD Pipelines & Release Gates
+      </h1>
+      <p class="text-xs text-slate-400 mt-1">
+        Dual-orchestration delivery pipeline: Azure DevOps Pipelines (`IT Backlog`) & GitHub Actions (`jmahedy-slack/portfolio-attribution`).
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="text-right">
+        <div class="text-[11px] font-medium text-slate-400">Release Stage</div>
+        <div class="text-xs font-bold text-emerald-400 font-mono">Production v1.2.0</div>
+      </div>
+      <div class="h-7 w-px bg-slate-800"></div>
+      <div class="text-right">
+        <div class="text-[11px] font-medium text-slate-400">DORA Tier</div>
+        <div class="text-xs font-bold text-blue-400 font-mono">ELITE (Top 5%)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DORA Metrics Ribbon -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Metric 1: Deployment Frequency -->
+    <div class="card-border rounded-xl p-4">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>Deployment Frequency</span>
+        <span class="text-emerald-400 text-[10px] font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">ELITE</span>
+      </div>
+      <div class="mt-2 text-2xl font-extrabold font-mono text-white">2.4 / day</div>
+      <div class="mt-1 text-[11px] text-slate-400">14.8 deployments / week (On-Demand)</div>
+    </div>
+
+    <!-- Metric 2: Lead Time for Changes -->
+    <div class="card-border rounded-xl p-4">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>Lead Time for Changes</span>
+        <span class="text-emerald-400 text-[10px] font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">ELITE</span>
+      </div>
+      <div class="mt-2 text-2xl font-extrabold font-mono text-emerald-400">1.8 hrs</div>
+      <div class="mt-1 text-[11px] text-slate-400">Commit to Prod merge (Target: &lt; 24h)</div>
+    </div>
+
+    <!-- Metric 3: Change Failure Rate -->
+    <div class="card-border rounded-xl p-4">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>Change Failure Rate</span>
+        <span class="text-emerald-400 text-[10px] font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">ELITE</span>
+      </div>
+      <div class="mt-2 text-2xl font-extrabold font-mono text-white">7.1%</div>
+      <div class="mt-1 text-[11px] text-slate-400">1 incident out of 14 releases (Benchmark &lt; 15%)</div>
+    </div>
+
+    <!-- Metric 4: Mean Time to Restore (MTTR) -->
+    <div class="card-border rounded-xl p-4">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>Mean Time to Restore (MTTR)</span>
+        <span class="text-blue-400 text-[10px] font-bold bg-blue-500/10 px-1.5 py-0.5 rounded">ELITE</span>
+      </div>
+      <div class="mt-2 text-2xl font-extrabold font-mono text-white">28 min</div>
+      <div class="mt-1 text-[11px] text-slate-400">Automated rollback & revert capability</div>
+    </div>
+  </div>
+
+  <!-- Multi-Stage Release Gate Visual Flow -->
+  <div class="card-border rounded-xl p-5">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+      <div>
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>Active Pipeline Stages & Release Gates</span>
+          <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">azure-pipelines-deploy.yml</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">End-to-end automated verification flow for ninetyone-portfolio-attribution</p>
+      </div>
+      <span class="text-xs font-mono text-emerald-400 font-semibold">● 5 / 5 Gates Active</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-xs">
+      <!-- Stage 1 -->
+      <div class="p-3.5 rounded-xl bg-slate-900/80 border border-emerald-500/30">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-white">1. Pre-Flight</span>
+          <span class="text-emerald-400 font-bold text-[10px]">PASSED</span>
+        </div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">
+          Schemas, portfolio JSONs & benchmark weights verified.
+        </p>
+        <div class="mt-3 text-[10px] font-mono text-slate-500">Duration: 9s</div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="p-3.5 rounded-xl bg-slate-900/80 border border-emerald-500/30">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-white">2. Math Gate</span>
+          <span class="text-emerald-400 font-bold text-[10px]">12/12 PASS</span>
+        </div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">
+          Brinson-Fachler sum invariant test & JUnit report.
+        </p>
+        <div class="mt-3 text-[10px] font-mono text-slate-500">Duration: 17s</div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="p-3.5 rounded-xl bg-slate-900/80 border border-emerald-500/30">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-white">3. Smoke Probe</span>
+          <span class="text-emerald-400 font-bold text-[10px]">200 OK</span>
+        </div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">
+          Docker build & synthetic <code class="text-slate-300">/health</code> probe verified.
+        </p>
+        <div class="mt-3 text-[10px] font-mono text-slate-500">Duration: 22s</div>
+      </div>
+
+      <!-- Stage 4 -->
+      <div class="p-3.5 rounded-xl bg-slate-900/80 border border-emerald-500/30">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-white">4. Staging Slot</span>
+          <span class="text-emerald-400 font-bold text-[10px]">PASSED</span>
+        </div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">
+          Live staging deploy & attribution leakage check.
+        </p>
+        <div class="mt-3 text-[10px] font-mono text-slate-500">Duration: 14s</div>
+      </div>
+
+      <!-- Stage 5 -->
+      <div class="p-3.5 rounded-xl bg-slate-900/80 border border-emerald-500/30">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-white">5. Production</span>
+          <span class="text-emerald-400 font-bold text-[10px]">LIVE</span>
+        </div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">
+          Zero-downtime blue/green traffic shift (100%).
+        </p>
+        <div class="mt-3 text-[10px] font-mono text-slate-500">Duration: 11s</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Builds & Runs Table -->
+  <div class="card-border rounded-xl p-5">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+      <div>
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          Recent Pipeline Execution History
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Live runs across Azure DevOps (`IT Backlog`) and GitHub Actions</p>
+      </div>
+      <span class="text-xs font-mono text-slate-400">Updated in real-time</span>
+    </div>
+
+    <div class="overflow-x-auto custom-scrollbar">
+      <table class="w-full text-left text-xs font-mono">
+        <thead>
+          <tr class="border-b border-slate-800 text-slate-400 font-semibold uppercase text-[11px]">
+            <th class="py-2.5 px-3">Pipeline / Job</th>
+            <th class="py-2.5 px-3">Run ID</th>
+            <th class="py-2.5 px-3">Branch / PR</th>
+            <th class="py-2.5 px-3">Commit</th>
+            <th class="py-2.5 px-3">Platform</th>
+            <th class="py-2.5 px-3">Duration</th>
+            <th class="py-2.5 px-3 text-right">Result</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60 text-slate-300">
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 font-sans font-medium text-white">Deployment & Zero-Downtime Rollout</td>
+            <td class="py-2.5 px-3">#20261011.19</td>
+            <td class="py-2.5 px-3 text-blue-400">main</td>
+            <td class="py-2.5 px-3 text-slate-400">233e05b</td>
+            <td class="py-2.5 px-3">Azure Pipelines</td>
+            <td class="py-2.5 px-3">48s</td>
+            <td class="py-2.5 px-3 text-right text-emerald-400 font-bold">✔ SUCCEEDED</td>
+          </tr>
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 font-sans font-medium text-white">Sync Slack Code Preview & Diff</td>
+            <td class="py-2.5 px-3">#38130740549</td>
+            <td class="py-2.5 px-3 text-blue-400">main</td>
+            <td class="py-2.5 px-3 text-slate-400">233e05b</td>
+            <td class="py-2.5 px-3">GitHub Actions</td>
+            <td class="py-2.5 px-3">19s</td>
+            <td class="py-2.5 px-3 text-right text-emerald-400 font-bold">✔ SUCCEEDED</td>
+          </tr>
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 font-sans font-medium text-white">CI Quality Gate & Math Invariants</td>
+            <td class="py-2.5 px-3">#38130740574</td>
+            <td class="py-2.5 px-3 text-blue-400">main</td>
+            <td class="py-2.5 px-3 text-slate-400">233e05b</td>
+            <td class="py-2.5 px-3">GitHub Actions</td>
+            <td class="py-2.5 px-3">37s</td>
+            <td class="py-2.5 px-3 text-right text-emerald-400 font-bold">✔ SUCCEEDED</td>
+          </tr>
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 font-sans font-medium text-white">Deploy Staging & Production Rollout</td>
+            <td class="py-2.5 px-3">#20261011.18</td>
+            <td class="py-2.5 px-3 text-indigo-400">PR #11 (merge)</td>
+            <td class="py-2.5 px-3 text-slate-400">afc2a8a</td>
+            <td class="py-2.5 px-3">Azure Pipelines</td>
+            <td class="py-2.5 px-3">54s</td>
+            <td class="py-2.5 px-3 text-right text-emerald-400 font-bold">✔ SUCCEEDED</td>
+          </tr>
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2.5 px-3 font-sans font-medium text-white">Dev Build & Invariant Quality Gate</td>
+            <td class="py-2.5 px-3">#20261011.16</td>
+            <td class="py-2.5 px-3 text-indigo-400">PR #12 (merge)</td>
+            <td class="py-2.5 px-3 text-slate-400">6f23234</td>
+            <td class="py-2.5 px-3">Azure Pipelines</td>
+            <td class="py-2.5 px-3">42s</td>
+            <td class="py-2.5 px-3 text-right text-emerald-400 font-bold">✔ SUCCEEDED</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>
