@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * Syncs the local Homepage.html and Git Unified Diff to the Slack Code split-view Artifact tabs.
+ * Syncs Homepage.html, market-feed.html, esg-scorecard.html, and the Git Unified Diff
+ * to the Slack Code split-view Artifact tabs.
  * Uses Slack's agents.conversations.setView and agents.conversations.setProperties APIs to update
- * the live preview and the Code/Diff tab in real time.
+ * all live views, telemetry monitors, and the Code/Diff tab in real time.
  */
 
 import { readFileSync, existsSync } from "node:fs";
@@ -39,24 +40,47 @@ const commitSha = (process.env.GITHUB_SHA || (() => {
 
 const repoName = process.env.GITHUB_REPOSITORY || "jmahedy-slack/portfolio-attribution";
 
-// 1. Locate Homepage.html or fallback to index.html
-let htmlFile = join(ROOT, "Homepage.html");
-if (!existsSync(htmlFile)) {
-  htmlFile = join(ROOT, "index.html");
+// Helper to load file content if exists
+function loadFile(filename) {
+  const p = join(ROOT, filename);
+  if (existsSync(p)) return readFileSync(p, "utf8");
+  return "";
 }
 
-let htmlContent = "";
-if (existsSync(htmlFile)) {
-  htmlContent = readFileSync(htmlFile, "utf8");
+// 1. Locate Homepage.html or fallback to index.html
+let htmlContent = loadFile("Homepage.html") || loadFile("index.html");
+
+// If src/public/style.css exists, detect any primary background color change and inject it
+const styleCssPath = join(ROOT, "src/public/style.css");
+if (htmlContent && existsSync(styleCssPath)) {
+  const styleCss = readFileSync(styleCssPath, "utf8");
+  const bgMatch = styleCss.match(/--bg-primary:\s*(#[0-9a-fA-F]{3,8})/);
+  const defaultBg = "#0b0f19";
+  if (bgMatch && bgMatch[1] && bgMatch[1].toLowerCase() !== defaultBg) {
+    const bgColor = bgMatch[1];
+    const isLightBg = ["#ff", "#fa", "#f5", "#fe", "#e0", "#d0", "#c0", "#b0", "#a0"].some((prefix) =>
+      bgColor.toLowerCase().startsWith(prefix)
+    );
+    const injectCss = `
+      <style id="agent-injected-theme">
+        body { background: ${bgColor} !important; ${isLightBg ? "color: #0f172a !important;" : ""} }
+        ${isLightBg ? ".text-white { color: #0f172a !important; } .card-border { background: rgba(255,255,255,0.85) !important; border-color: rgba(0,0,0,0.12) !important; color: #1e293b !important; } table { color: #1e293b !important; }" : ""}
+      </style>
+    `;
+    htmlContent = htmlContent.replace("</head>", `${injectCss}\n</head>`);
+  }
 }
+
+const marketFeedContent = loadFile("market-feed.html");
+const esgScorecardContent = loadFile("esg-scorecard.html");
 
 async function syncCodeChannel() {
   console.log(`[Slack Code Sync] Target Channel: ${CHANNEL_ID}`);
   console.log(`[Slack Code Sync] Repo: ${repoName} | Branch: ${branch} | Commit: ${commitSha}`);
 
-  // 1. Update the HTML Homepage Preview in the split pane (if available)
+  // 1. Update Homepage HTML Preview in the split pane
   if (htmlContent) {
-    const setViewRes = await fetch("https://slack.com/api/agents.conversations.setView", {
+    const res = await fetch("https://slack.com/api/agents.conversations.setView", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${SLACK_BOT_TOKEN}`,
@@ -69,20 +93,66 @@ async function syncCodeChannel() {
         name: "Homepage",
         content: htmlContent,
       }),
-    });
+    }).then((r) => r.json());
 
-    const setViewData = await setViewRes.json();
-    if (setViewData.ok) {
-      console.log("✔ agents.conversations.setView (type: html) succeeded:", setViewData.view_id);
+    if (res.ok) {
+      console.log("✔ agents.conversations.setView (Homepage) succeeded:", res.view_id);
     } else {
-      console.warn("⚠ agents.conversations.setView (type: html) warning:", setViewData.error);
+      console.warn("⚠ agents.conversations.setView (Homepage) warning:", res.error);
     }
   }
 
-  // 2. Extract Unified Diff and publish to the Code/Diff tab in Artifacts
+  // 2. Update Market & Pricing Feed HTML Monitor in the split pane
+  if (marketFeedContent) {
+    const res = await fetch("https://slack.com/api/agents.conversations.setView", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SLACK_BOT_TOKEN}`,
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        channel_id: CHANNEL_ID,
+        type: "html",
+        view_key: "market-feed.html",
+        name: "Market Feeds",
+        content: marketFeedContent,
+      }),
+    }).then((r) => r.json());
+
+    if (res.ok) {
+      console.log("✔ agents.conversations.setView (Market Feeds) succeeded:", res.view_id);
+    } else {
+      console.warn("⚠ agents.conversations.setView (Market Feeds) warning:", res.error);
+    }
+  }
+
+  // 3. Update ESG SFDR Article 8 Mandate Scorecard in the split pane
+  if (esgScorecardContent) {
+    const res = await fetch("https://slack.com/api/agents.conversations.setView", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SLACK_BOT_TOKEN}`,
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        channel_id: CHANNEL_ID,
+        type: "html",
+        view_key: "esg-scorecard.html",
+        name: "ESG Scorecard",
+        content: esgScorecardContent,
+      }),
+    }).then((r) => r.json());
+
+    if (res.ok) {
+      console.log("✔ agents.conversations.setView (ESG Scorecard) succeeded:", res.view_id);
+    } else {
+      console.warn("⚠ agents.conversations.setView (ESG Scorecard) warning:", res.error);
+    }
+  }
+
+  // 4. Extract Unified Diff and publish to the Code/Diff tab in Artifacts
   let diffContent = "";
   try {
-    // If on a feature branch, diff against origin/main or main
     if (branch !== "main") {
       try {
         diffContent = execSync("git diff origin/main...HEAD", { cwd: ROOT, encoding: "utf8" }).trim();
@@ -90,7 +160,6 @@ async function syncCodeChannel() {
         diffContent = execSync("git diff main...HEAD", { cwd: ROOT, encoding: "utf8" }).trim();
       }
     } else {
-      // On main, show the last commit's diff
       diffContent = execSync("git diff HEAD~1..HEAD", { cwd: ROOT, encoding: "utf8" }).trim();
     }
   } catch (err) {
@@ -112,19 +181,18 @@ async function syncCodeChannel() {
         base_branch: "main",
         head_branch: branch,
       }),
-    });
+    }).then((r) => r.json());
 
-    const setDiffData = await setDiffRes.json();
-    if (setDiffData.ok) {
-      console.log("✔ agents.conversations.setView (type: diff) succeeded. Code tab populated:", setDiffData.file_id);
+    if (setDiffRes.ok) {
+      console.log("✔ agents.conversations.setView (type: diff) succeeded. Code tab populated:", setDiffRes.file_id);
     } else {
-      console.warn("⚠ agents.conversations.setView (type: diff) warning:", setDiffData.error);
+      console.warn("⚠ agents.conversations.setView (type: diff) warning:", setDiffRes.error);
     }
   } else {
     console.log("ℹ No changes detected between branches to publish as diff.");
   }
 
-  // 3. Check for open PR link if possible
+  // 5. Check for open PR link if possible
   let prUrl = "";
   let prLabel = "";
   try {
@@ -141,7 +209,7 @@ async function syncCodeChannel() {
     }
   } catch (_) {}
 
-  // 4. Update the bottom context bar items (repo, branch, PR, commit)
+  // 6. Update the bottom context bar items (repo, branch, PR, commit)
   const contextItems = [
     {
       key: "repo",
@@ -189,16 +257,15 @@ async function syncCodeChannel() {
         context_bar_items: contextItems,
       },
     }),
-  });
+  }).then((r) => r.json());
 
-  const setPropsData = await setPropsRes.json();
-  if (setPropsData.ok) {
+  if (setPropsRes.ok) {
     console.log("✔ agents.conversations.setProperties updated context bar with items:", contextItems.map((i) => i.label));
   } else {
-    console.warn("⚠ agents.conversations.setProperties warning:", setPropsData.error);
+    console.warn("⚠ agents.conversations.setProperties warning:", setPropsRes.error);
   }
 
-  // 5. Channel status message
+  // 7. Channel status message
   if (process.env.NOTIFY_SLACK === "true" || process.env.CI) {
     const detailParts = [`branch \`${branch}\``, `commit \`${commitSha}\``];
     if (prUrl) detailParts.push(`<${prUrl}|${prLabel}>`);
@@ -212,7 +279,7 @@ async function syncCodeChannel() {
       },
       body: JSON.stringify({
         channel: CHANNEL_ID,
-        text: `⚡ *Slack Code Updated:* Synced ${detailParts.join(" • ")}.`,
+        text: `⚡ *Slack Code Updated:* Synced ${detailParts.join(" • ")}. Views: \`Homepage\`, \`Market Feeds\`, \`ESG Scorecard\`, \`Plan\`, \`Code\`.`,
       }),
     });
   }
