@@ -2,9 +2,11 @@
   "name": "portfolio-dashboard",
   "version": "1.0.0",
   "description": "Westbrook Wealth — Real-time Institutional Portfolio Performance & Attribution Dashboard",
+  "type": "module",
   "main": "index.html",
   "scripts": {
-    "start": "npx serve -p 3000 ."
+    "start": "npx serve -p 3000 .",
+    "sync:preview": "node scripts/sync-preview.js"
   },
   "keywords": [
     "wealth",
